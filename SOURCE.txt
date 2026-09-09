@@ -1,0 +1,6 @@
+Dataset: Twitter US Airline Sentiment, shared by CrowdFlower on Kaggle.
+Source: https://www.kaggle.com/datasets/crowdflower/twitter-airline-sentiment
+Input: Tweets.csv from user-uploaded archive (1).zip.
+CSV bytes preserved under data/reviews.csv; SHA-256: ea94b23f41892b290dec3330bb8cf9cb6b8bc669eaae5f3a84c40f7b0de8f15e
+No synthetic examples mixed into this dataset. All model cleaning occurs reproducibly in model.py.
+Original attribution remains with the dataset creators. See source page for dataset terms.

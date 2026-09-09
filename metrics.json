@@ -1,0 +1,79 @@
+{
+  "dataset_sha256": "ea94b23f41892b290dec3330bb8cf9cb6b8bc669eaae5f3a84c40f7b0de8f15e",
+  "seed": 42,
+  "train_rows": 10604,
+  "test_rows": 3535,
+  "rows_removed": 501,
+  "duplicates_removed": 240,
+  "cleaning": {
+    "input_rows": 14640,
+    "empty_removed": 0,
+    "conflicting_rows_removed": 261,
+    "duplicates_removed": 240
+  },
+  "class_counts": {
+    "negative": 9059,
+    "neutral": 2914,
+    "positive": 2166
+  },
+  "accuracy": 0.7841584158415842,
+  "macro_f1": 0.7293085742366335,
+  "baseline_accuracy": 0.6407355021216408,
+  "baseline_macro_f1": 0.26034482758620686,
+  "classification_report": {
+    "negative": {
+      "precision": 0.8876404494382022,
+      "recall": 0.8370860927152318,
+      "f1-score": 0.8616223585548739,
+      "support": 2265.0
+    },
+    "neutral": {
+      "precision": 0.5844311377245509,
+      "recall": 0.6694101508916324,
+      "f1-score": 0.6240409207161125,
+      "support": 729.0
+    },
+    "positive": {
+      "precision": 0.6879432624113475,
+      "recall": 0.7171903881700554,
+      "f1-score": 0.702262443438914,
+      "support": 541.0
+    },
+    "accuracy": 0.7841584158415842,
+    "macro avg": {
+      "precision": 0.7200049498580335,
+      "recall": 0.7412288772589731,
+      "f1-score": 0.7293085742366335,
+      "support": 3535.0
+    },
+    "weighted avg": {
+      "precision": 0.7945497092908811,
+      "recall": 0.7841584158415842,
+      "f1-score": 0.7882388840818353,
+      "support": 3535.0
+    }
+  },
+  "confusion_matrix": [
+    [
+      1896,
+      263,
+      106
+    ],
+    [
+      171,
+      488,
+      70
+    ],
+    [
+      69,
+      84,
+      388
+    ]
+  ],
+  "label_order": [
+    "negative",
+    "neutral",
+    "positive"
+  ],
+  "note": "Single stratified row-level held-out split; related authors and paraphrases may cross splits. Results measure this dataset, not future or general product-review accuracy."
+}
