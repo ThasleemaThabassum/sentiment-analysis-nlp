@@ -1,119 +1,297 @@
-# ReviewLens — Airline Sentiment Analysis Using NLP
+ReviewLens | Airline Sentiment Analysis
 
-Updated with the Twitter US Airline Sentiment dataset uploaded by you.
-A real TF–IDF + logistic regression classifier predicts positive, negative or neutral
-sentiment in English airline feedback. Includes Streamlit, CSV upload, evaluation,
-and reproducible training. No API key required.
+An NLP application that classifies English airline feedback as positive, negative, or neutral using TF–IDF and logistic regression, with an interactive Streamlit interface.
 
-## Start on Windows
+Launch the live app · Explore the dataset
 
-Extract the ZIP. Open the `sentiment_nlp` folder in VS Code, then open its terminal.
-Install Python 3.11 or 3.12 if needed, and run:
+Overview
 
-```powershell
+Customer feedback contains useful signals about service quality, delays, cancellations, and travel experiences. ReviewLens demonstrates how a supervised text-classification pipeline can turn that feedback into sentiment labels.
+
+The project covers data preparation, feature extraction, model training, held-out evaluation, and a deployed interface. It is designed as an educational baseline for airline feedback analysis.
+
+Features
+
+Review prediction: enter feedback and receive a three-class sentiment prediction.
+
+Probability chart: inspect the model’s estimated probability for each class.
+
+Low-confidence indication: distinguish uncertainty from neutral sentiment.
+
+Custom dataset upload: train on a CSV using either review / sentiment or Kaggle’s text / airline_sentiment columns.
+
+Evaluation dashboard: explore accuracy, macro-F1, per-class metrics, and a confusion matrix.
+
+Error inspection: view individual held-out predictions and download an evaluation report.
+
+Technology Stack
+
+Component
+
+Technology
+
+Language
+
+Python
+
+Data processing
+
+pandas
+
+Text features
+
+scikit-learn TF–IDF
+
+Classifier
+
+scikit-learn logistic regression
+
+Interface and charts
+
+Streamlit
+
+Hosting
+
+Streamlit Community Cloud
+
+Dataset
+
+The project uses Twitter US Airline Sentiment, shared by CrowdFlower on Kaggle. It contains 14,640 tweets labelled positive, negative, or neutral and covers multiple US airlines—not only American Airlines.
+
+Dataset source and usage terms
+
+Original label
+
+Tweets
+
+Negative
+
+9,178
+
+Neutral
+
+3,099
+
+Positive
+
+2,363
+
+Total
+
+14,640
+
+Only tweet text is used as model input. The sentiment label is the target. Other fields, including annotation confidence and negative-reason labels, are excluded from the features.
+
+Preparation
+
+Text normalization removes URLs and user mentions, normalizes case, and retains negation. Before splitting, the pipeline removes all rows in conflicting normalized-text label groups and then removes remaining duplicates.
+
+Preparation result
+
+Rows
+
+Original dataset
+
+14,640
+
+Conflicting-label rows removed
+
+261
+
+Additional duplicate rows removed
+
+240
+
+Empty normalized rows removed
+
+0
+
+Available for modelling
+
+14,139
+
+Model Workflow
+
+Prepare the data: validate labels and clean duplicate or conflicting examples.
+
+Split the dataset: use a stratified 75% training / 25% test split with random seed 42.
+
+Extract features: fit TF–IDF on training text only, using unigrams and bigrams with a maximum of 20,000 features.
+
+Train the classifier: fit logistic regression with balanced class weights.
+
+Evaluate: compare held-out predictions with the labelled test set and a majority-class baseline.
+
+Predict: reuse the fitted pipeline for new feedback entered in the app.
+
+The app trains the model in memory and caches it. No external AI API or pretrained model download is required.
+
+Evaluation Results
+
+The following results were measured on a single held-out test split using the bundled dataset.
+
+Metric
+
+Result
+
+Training samples
+
+10,604
+
+Test samples
+
+3,535
+
+Test accuracy
+
+78.42%
+
+Macro-F1
+
+0.729
+
+Majority-class baseline accuracy
+
+64.07%
+
+Performance by Class
+
+Sentiment
+
+Precision
+
+Recall
+
+F1-score
+
+Negative
+
+0.888
+
+0.837
+
+0.862
+
+Neutral
+
+0.584
+
+0.669
+
+0.624
+
+Positive
+
+0.688
+
+0.717
+
+0.702
+
+Negative sentiment is the strongest class in this evaluation. Neutral sentiment remains more difficult. Macro-F1 is included because it gives equal weight to each class, while accuracy can be dominated by the larger negative class.
+
+These results describe this dataset and split. They are not a guarantee of performance on future feedback or other domains.
+
+Run Locally
+
+Use Python 3.12 to match the original development setup. Download and extract the repository, then open a terminal in the folder containing app.py and requirements.txt.
+
+Windows PowerShell
+
 py -m venv .venv
 .venv\Scripts\python -m pip install -r requirements.txt
 .venv\Scripts\python -m streamlit run app.py
-```
 
-Open http://localhost:8501 if the browser does not open automatically. The model trains
-at launch and is cached. Keep the terminal open; Ctrl+C stops the app. Internet is
-needed to install packages; the included data then works offline.
+macOS / Linux
 
-macOS/Linux: use `python3 -m venv .venv`, then `.venv/bin/python` in place of
-`.venv\Scripts\python` in the commands above.
+python3 -m venv .venv
+.venv/bin/python -m pip install -r requirements.txt
+.venv/bin/python -m streamlit run app.py
 
-## What changed
+Open http://localhost:8501 if the browser does not open automatically. The first launch trains the model; subsequent interactions reuse the cached model.
 
-- Replaced 120 synthetic examples with your real, 14,640-row Kaggle CSV.
-- Directly accepts Kaggle `text`/`airline_sentiment` columns or `review`/`sentiment`.
-- Removes mentions and URLs for modelling, retains negation and word bigrams.
-- Removes all rows in conflicting normalized-text label groups, instead of guessing labels.
-- Removes remaining normalized duplicates before the split.
-- Updated the interface for airline feedback and included actual evaluation reports.
+Dataset location: this repository’s deployed app.py expects reviews.csv beside app.py. Keep that layout when downloading and running the GitHub version.
 
-## Actual evaluation
+Use a Custom Dataset
 
-| Measure | Result |
-|---|---:|
-| Original rows | 14,640 |
-| Conflicting-label rows removed | 261 |
-| Additional duplicate rows removed | 240 |
-| Empty normalized rows removed | 0 |
-| Remaining rows | 14,139 |
-| Training rows | 10,604 |
-| Held-out test rows | 3,535 |
-| Test accuracy | 78.42% |
-| Macro-F1 | 0.7293 |
-| Majority-class baseline accuracy | 64.07% |
+Upload a UTF-8 CSV from the app’s sidebar. Supported column pairs are:
 
-Per-class F1: negative 0.8616, neutral 0.6240, positive 0.7023.
-Neutral is harder for this model than negative. Scores are from one fixed stratified
-75/25 row split, seed 42; hyperparameters were not tuned against this test set.
-TF–IDF vocabulary/IDF are fitted only on training text. Logistic regression uses
-balanced class weights, max_iter=1500 and at most 20,000 unigram/bigram features.
+Format
 
-These scores are not directly comparable with the earlier synthetic-data score because
-the test datasets differ. They are not a guarantee for future reviews, other languages,
-or product reviews. Related authors and paraphrases may still cross this row-level
-split. For a stronger study, reserve an independent time-based or author-grouped test
-set and use training-only cross-validation for tuning. Do not tune against the test tab.
+Text column
 
-## Using the app
+Label column
 
-Enter an airline review, click **Analyse sentiment**, and read its predicted label.
-The bar chart displays uncalibrated class probabilities, not guaranteed correctness.
-Low confidence is indicated separately from neutral sentiment. The evaluation tab
-shows the confusion matrix, class metrics, individual held-out predictions and a report
-download. The sidebar accepts another labelled CSV; at least 10 cleaned reviews per
-class are required. Missing values and unsupported labels produce an actionable error.
-Uploaded data is processed in memory; this app does not write it to disk.
+General CSV
 
-Example inputs (original demo sentences):
-- Thank you for the excellent service!
-- My flight was cancelled and nobody helped.
-- What time does boarding start?
+review
 
-Sarcasm, mixed opinions and unfamiliar topics remain limitations. Overall polarity is
-not an aspect-level sentiment analysis system.
+sentiment
 
-## Reproduce the evaluation
+Kaggle airline CSV
 
-```powershell
-.venv\Scripts\python train.py
-.venv\Scripts\python -m unittest test_project -v
-```
+text
 
-`train.py --data path/to/Tweets.csv` accepts a different dataset. Reports are written to
-`reports/metrics.json` and `reports/test_predictions.csv`. The model is rebuilt in memory;
-no pickle or pretrained model download is needed. Exact tested main-package versions
-are in `requirements-tested.txt`; `requirements.txt` contains compatible ranges.
+airline_sentiment
 
-## Files
+Accepted labels are positive, negative, and neutral. At least 10 unique, usable examples per class are required after cleaning; a much larger, independently labelled dataset is preferable for meaningful evaluation.
 
-- app.py — Streamlit UI.
-- model.py — normalization, validation, deduplication, training and prediction.
-- train.py — reproducible evaluation export.
-- test_project.py — pipeline and Streamlit interaction tests.
-- data/reviews.csv — your uploaded Tweets.csv, retaining original columns.
-- data/SOURCE.txt — dataset provenance and transformation policy.
-- reports/ — actual measured evaluation, not illustrative numbers.
+Format example only:
 
-Only text is passed to the vectorizer and only airline_sentiment supplies targets.
-Other columns such as label confidence, negative reason, user name and location are
-not used as model features. The SQLite copy from the upload is not needed.
+review,sentiment
+"The crew was helpful and friendly.",positive
+"My flight was cancelled without support.",negative
+"What time does boarding begin?",neutral
 
-## Explain it in your seminar
+The three rows above illustrate the format and are not enough to train the model.
 
-“I used the Kaggle Twitter US Airline Sentiment dataset. After cleaning duplicates and
-conflicting labels, I trained TF–IDF with logistic regression on 10,604 tweets. On 3,535
-held-out tweets, it achieved 78.42% accuracy and 0.729 macro-F1. The Streamlit interface
-accepts new airline feedback and predicts positive, negative or neutral sentiment.”
+Reproduce the Report
 
-## References
+For the repository layout with reviews.csv at the root, run:
 
-- Dataset: https://www.kaggle.com/datasets/crowdflower/twitter-airline-sentiment
-- TF–IDF: https://scikit-learn.org/stable/modules/generated/sklearn.feature_extraction.text.TfidfVectorizer.html
-- Logistic regression: https://scikit-learn.org/stable/modules/generated/sklearn.linear_model.LogisticRegression.html
-- Evaluation: https://scikit-learn.org/stable/modules/model_evaluation.html
-- Streamlit: https://docs.streamlit.io/
+.venv\Scripts\python train.py --data reviews.csv
+
+The explicit --data argument overrides the training script’s original default dataset path. Evaluation outputs are written to reports/metrics.json and reports/test_predictions.csv.
+
+Limitations
+
+The training data concerns US airline tweets; results may not transfer to other products, languages, or writing styles.
+
+Sarcasm, mixed opinions, and unfamiliar expressions can cause errors.
+
+One overall label may hide different opinions about separate aspects of a journey.
+
+Model probabilities are uncalibrated estimates, not guarantees. Low confidence does not mean neutral sentiment.
+
+Duplicate removal reduces exact-text leakage, but related authors and paraphrases may still occur across the row-level split.
+
+Stronger evaluation would use independent data or time-based/author-grouped splits. Any tuning should use training-only validation, leaving the final test set untouched.
+
+Possible Extensions
+
+Aspect-level analysis for staff, baggage, delays, and booking experience.
+
+Better coverage of neutral and mixed feedback.
+
+Comparison with other classical baselines and contextual language models.
+
+Probability calibration and evaluation on more recent, independently collected data.
+
+These are future directions, not implemented features.
+
+Author
+
+Thasleema Thabassum
+B.Tech — Computer Science and Engineering (Data Science)
+
+References
+
+Twitter US Airline Sentiment — Kaggle / CrowdFlower
+
+TF–IDF vectorizer — scikit-learn
+
+Logistic regression — scikit-learn
+
+Model evaluation — scikit-learn
+
+Streamlit documentation
