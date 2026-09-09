@@ -21,7 +21,7 @@ with st.sidebar:
     st.write('Features: words and two-word phrases')
     st.write('Split: 75% training / 25% testing')
     st.caption('English text baseline. Neutral means no clear positive or negative opinion—not uncertainty.')
-raw = upload.getvalue() if upload else (Path(__file__).parent / 'data/reviews.csv').read_bytes()
+raw = upload.getvalue() if upload else (Path(__file__).parent / 'reviews.csv').read_bytes()
 try:
     pipeline, report, results, _, _ = load_model(raw)
 except ValueError as exc:
